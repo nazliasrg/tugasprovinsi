@@ -8,6 +8,7 @@ import com.nazli.tugasprovinsi.repository.ProvinsiRepository;
 import com.nazli.tugasprovinsi.services.AllService;
 import com.nazli.tugasprovinsi.services.ProvinsiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,24 +50,40 @@ public class ProvinsiController {
 //  insert data provinsi
     @PostMapping("/insert/provinsi")
     public ResponseEntity<?> insertProvinsiEntity(@RequestBody ProvinsiDto provinsiDto){
-        ProvinsiEntity provinsiEntity = provinsiService.insertProvinsiEntity(provinsiDto);
-        return ResponseEntity.ok(provinsiEntity);
+
+        StatusMessageDto<ProvinsiEntity> result = new StatusMessageDto<>();
+        try{
+            return provinsiService.insertProvinsiEntity(provinsiDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  update data provinsi
     @PutMapping("/update/provinsi/{id}")
     public ResponseEntity<?> updateProvinsiEntity(@PathVariable Integer id, @RequestBody ProvinsiDto provinsiDto){
-        ProvinsiEntity provinsiEntity = provinsiService.updateProvinsiEntity(id, provinsiDto);
-        return ResponseEntity.ok(provinsiEntity);
+        StatusMessageDto<ProvinsiEntity> result = new StatusMessageDto<>();
+        try{
+            return provinsiService.updateProvinsiEntity(id, provinsiDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  delete data provinsi
     @DeleteMapping("/delete/provinsi/{namaProvinsi}")
     public ResponseEntity<?> deleteProvinsiEntity(@PathVariable String namaProvinsi){
+        StatusMessageDto<ProvinsiEntity> result = new StatusMessageDto<>();
         ProvinsiEntity provinsiEntity = provinsiRepository.findByNamaProvinsi(namaProvinsi);
         provinsiEntity.setStatus(0);
         provinsiRepository.save(provinsiEntity);
-        return ResponseEntity.ok(provinsiEntity);
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Provinsi " + provinsiEntity.getNamaProvinsi() + " berhasil dihapus!");
+        result.setData(provinsiEntity);
+        return ResponseEntity.ok(result);
     }
 
 //  insert all data

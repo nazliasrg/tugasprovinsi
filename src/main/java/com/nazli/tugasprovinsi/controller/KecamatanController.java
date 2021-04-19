@@ -1,11 +1,14 @@
 package com.nazli.tugasprovinsi.controller;
 
 import com.nazli.tugasprovinsi.model.dto.KecamatanDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.DesaEntity;
 import com.nazli.tugasprovinsi.model.entity.KecamatanEntity;
+import com.nazli.tugasprovinsi.model.entity.ProvinsiEntity;
 import com.nazli.tugasprovinsi.repository.KecamatanRepository;
 import com.nazli.tugasprovinsi.services.KecamatanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,24 +61,39 @@ public class KecamatanController {
 //  insert data kecamatan
     @PostMapping("/insert/kecamatan/{kodeProvinsi}/{kodeKabupaten}")
     public ResponseEntity<?> insertKecamatanEntity(@PathVariable String kodeProvinsi, @PathVariable String kodeKabupaten, @RequestBody KecamatanDto kecamatanDto){
-        KecamatanEntity kecamatanEntity = kecamatanService.insertKecamatanEntity(kodeProvinsi, kodeKabupaten, kecamatanDto);
-        return ResponseEntity.ok(kecamatanEntity);
+        StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
+        try{
+            return kecamatanService.insertKecamatanEntity(kodeProvinsi, kodeKabupaten, kecamatanDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  update data kecamatan
     @PutMapping("/update/kecamatan/{namaKecamatan}")
     public ResponseEntity<?> updateKecamatanEntity(@PathVariable String namaKecamatan, @RequestBody KecamatanDto kecamatanDto){
-        KecamatanEntity kecamatanEntity = kecamatanService.updateKecamatanEntity(namaKecamatan, kecamatanDto);
-        return ResponseEntity.ok(kecamatanEntity);
+        StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
+        try{
+            return kecamatanService.updateKecamatanEntity(namaKecamatan, kecamatanDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  delete data kecamatan
     @DeleteMapping("/delete/kecamatan/{namaKecamatan}")
     public ResponseEntity<?> deleteKecamatanEntity(@PathVariable String namaKecamatan){
+        StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
         KecamatanEntity kecamatanEntity = kecamatanRepository.findByNamaKecamatan(namaKecamatan);
         kecamatanEntity.setStatus(0);
         kecamatanRepository.save(kecamatanEntity);
-        return ResponseEntity.ok(kecamatanEntity);
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Kecamatan " + kecamatanEntity.getNamaKecamatan() + " berhasil dihapus!");
+        result.setData(kecamatanEntity);
+        return ResponseEntity.ok(result);
     }
 
 }

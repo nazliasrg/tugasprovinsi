@@ -2,8 +2,9 @@ package com.nazli.tugasprovinsi.services;
 
 import com.nazli.tugasprovinsi.model.dto.KecamatanDto;
 import com.nazli.tugasprovinsi.model.entity.KecamatanEntity;
+import org.springframework.http.ResponseEntity;
 
 public interface KecamatanService {
-    KecamatanEntity insertKecamatanEntity(String kodeProvinsi, String kodeKabupaten, KecamatanDto kecamatanDto);
-    KecamatanEntity updateKecamatanEntity(String namaKecamatan, KecamatanDto kecamatanDto);
+    ResponseEntity<?> insertKecamatanEntity(String kodeProvinsi, String kodeKabupaten, KecamatanDto kecamatanDto);
+    ResponseEntity<?> updateKecamatanEntity(String namaKecamatan, KecamatanDto kecamatanDto);
 }

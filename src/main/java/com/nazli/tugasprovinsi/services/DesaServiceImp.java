@@ -1,6 +1,7 @@
 package com.nazli.tugasprovinsi.services;
 
 import com.nazli.tugasprovinsi.model.dto.DesaDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.DesaEntity;
 import com.nazli.tugasprovinsi.model.entity.KabupatenEntity;
 import com.nazli.tugasprovinsi.model.entity.KecamatanEntity;
@@ -10,6 +11,8 @@ import com.nazli.tugasprovinsi.repository.KabupatenRepository;
 import com.nazli.tugasprovinsi.repository.KecamatanRepository;
 import com.nazli.tugasprovinsi.repository.ProvinsiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +32,22 @@ public class DesaServiceImp implements DesaService{
     private ProvinsiRepository provinsiRepository;
 
     @Override
-    public DesaEntity insertDesaEntity(String kodeProvinsi, String kodeKabupaten, String kodeKecamatan, DesaDto desaDto) {
+    public ResponseEntity<?> insertDesaEntity(String kodeProvinsi, String kodeKabupaten, String kodeKecamatan, DesaDto desaDto) {
+        StatusMessageDto<DesaEntity> result = new StatusMessageDto<>();
+
         DesaEntity desaEntity = convertDtoToEntity(kodeProvinsi, kodeKabupaten, kodeKecamatan, desaDto);
         desaRepository.save(desaEntity);
-        return desaEntity;
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Desa " + desaEntity.getNamaDesa() + " berhasil ditambah!");
+        result.setData(desaEntity);
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public DesaEntity updateDesaEntity(String namaDesa, DesaDto desaDto) {
+    public ResponseEntity<?> updateDesaEntity(String namaDesa, DesaDto desaDto) {
+        StatusMessageDto<DesaEntity> result = new StatusMessageDto<>();
+
         DesaEntity desaEntity = desaRepository.findByNamaDesa(namaDesa);
 
         if(desaDto.getNamaDesa() != null){
@@ -59,7 +70,10 @@ public class DesaServiceImp implements DesaService{
         }
 
         desaRepository.save(desaEntity);
-        return desaEntity;
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Desa " + desaEntity.getNamaDesa() + " berhasil diupdate!");
+        result.setData(desaEntity);
+        return ResponseEntity.ok(result);
     }
 
     private DesaEntity convertDtoToEntity(String kodeProvinsi, String kodeKabupaten, String kodeKecamatan, DesaDto desaDto){

@@ -1,10 +1,13 @@
 package com.nazli.tugasprovinsi.controller;
 
 import com.nazli.tugasprovinsi.model.dto.DesaDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.DesaEntity;
+import com.nazli.tugasprovinsi.model.entity.ProvinsiEntity;
 import com.nazli.tugasprovinsi.repository.DesaRepository;
 import com.nazli.tugasprovinsi.services.DesaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,24 +67,41 @@ public class DesaController {
 //  insert data desa
     @PostMapping("/insert/desa/{kodeProvinsi}/{kodeKabupaten}/{kodeKecamatan}")
     public ResponseEntity<?> insertDesaEntity(@PathVariable String kodeProvinsi, @PathVariable String kodeKabupaten, @PathVariable String kodeKecamatan, @RequestBody DesaDto desaDto){
-        DesaEntity desaEntity = desaService.insertDesaEntity(kodeProvinsi, kodeKabupaten, kodeKecamatan, desaDto);
-        return ResponseEntity.ok(desaEntity);
+        StatusMessageDto<DesaEntity> result = new StatusMessageDto<>();
+        try{
+            return desaService.insertDesaEntity(kodeProvinsi, kodeKabupaten, kodeKecamatan, desaDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
+
     }
 
 //  update data desa
     @PutMapping("/update/desa/{namaDesa}")
     public ResponseEntity<?> updateKecamatanEntity(@PathVariable String namaDesa, @RequestBody DesaDto desaDto){
-        DesaEntity desaEntity = desaService.updateDesaEntity(namaDesa, desaDto);
-        return ResponseEntity.ok(desaEntity);
+        StatusMessageDto<DesaEntity> result = new StatusMessageDto<>();
+        try{
+            return desaService.updateDesaEntity(namaDesa, desaDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  delete data kecamatan
     @DeleteMapping("/delete/desa/{namaDesa}")
     public ResponseEntity<?> deleteDesaEntity(@PathVariable String namaDesa){
+        StatusMessageDto<DesaEntity> result = new StatusMessageDto<>();
+
         DesaEntity desaEntity = desaRepository.findByNamaDesa(namaDesa);
         desaEntity.setStatus(0);
         desaRepository.save(desaEntity);
-        return ResponseEntity.ok(desaEntity);
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Desa " + desaEntity.getNamaDesa() + " berhasil dihapus!");
+        result.setData(desaEntity);
+        return ResponseEntity.ok(result);
     }
 
 }

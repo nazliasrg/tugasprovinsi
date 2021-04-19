@@ -1,6 +1,7 @@
 package com.nazli.tugasprovinsi.services;
 
 import com.nazli.tugasprovinsi.model.dto.KecamatanDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.KabupatenEntity;
 import com.nazli.tugasprovinsi.model.entity.KecamatanEntity;
 import com.nazli.tugasprovinsi.model.entity.ProvinsiEntity;
@@ -8,6 +9,8 @@ import com.nazli.tugasprovinsi.repository.KabupatenRepository;
 import com.nazli.tugasprovinsi.repository.KecamatanRepository;
 import com.nazli.tugasprovinsi.repository.ProvinsiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +27,20 @@ public class KecamatanServiceImp implements KecamatanService{
     private ProvinsiRepository provinsiRepository;
 
     @Override
-    public KecamatanEntity insertKecamatanEntity(String kodeProvinsi, String kodeKabupaten, KecamatanDto kecamatanDto) {
+    public ResponseEntity<?> insertKecamatanEntity(String kodeProvinsi, String kodeKabupaten, KecamatanDto kecamatanDto) {
+        StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
         KecamatanEntity kecamatanEntity = convertDtoToEntity(kodeProvinsi, kodeKabupaten, kecamatanDto);
         kecamatanRepository.save(kecamatanEntity);
-        return kecamatanEntity;
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Kecamatan " + kecamatanEntity.getNamaKecamatan() + " berhasil ditambah!");
+        result.setData(kecamatanEntity);
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public KecamatanEntity updateKecamatanEntity(String namaKecamatan, KecamatanDto kecamatanDto) {
+    public ResponseEntity<?> updateKecamatanEntity(String namaKecamatan, KecamatanDto kecamatanDto) {
+        StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
         KecamatanEntity kecamatanEntity = kecamatanRepository.findByNamaKecamatan(namaKecamatan);
 
         if(kecamatanDto.getNamaKecamatan() != null){
@@ -50,7 +59,11 @@ public class KecamatanServiceImp implements KecamatanService{
         }
 
         kecamatanRepository.save(kecamatanEntity);
-        return kecamatanEntity;
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Kecamatan " + kecamatanEntity.getNamaKecamatan() + " berhasil diupdate!");
+        result.setData(kecamatanEntity);
+        return ResponseEntity.ok(result);
     }
 
     private KecamatanEntity convertDtoToEntity(String kodeProvinsi, String kodeKabupaten, KecamatanDto kecamatanDto){

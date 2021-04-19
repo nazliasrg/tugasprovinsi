@@ -1,11 +1,14 @@
 package com.nazli.tugasprovinsi.services;
 
 import com.nazli.tugasprovinsi.model.dto.KabupatenDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.KabupatenEntity;
 import com.nazli.tugasprovinsi.model.entity.ProvinsiEntity;
 import com.nazli.tugasprovinsi.repository.KabupatenRepository;
 import com.nazli.tugasprovinsi.repository.ProvinsiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +23,23 @@ public class KabupatenServiceImp implements KabupatenService{
     private ProvinsiRepository provinsiRepository;
 
     @Override
-    public KabupatenEntity insertKabupatenEntity(String kodeProvinsi, KabupatenDto kabupatenDto) {
+    public ResponseEntity<?> insertKabupatenEntity(String kodeProvinsi, KabupatenDto kabupatenDto) {
+        StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
         if(kabupatenDto.getNamaKabupaten() != null){
             KabupatenEntity kabupatenEntity = convertDtoToEntity(kodeProvinsi, kabupatenDto);
             kabupatenRepository.save(kabupatenEntity);
-            return kabupatenEntity;
+
+            result.setStatus(HttpStatus.OK.value());
+            result.setMessage("Data Kabupaten " + kabupatenEntity.getNamaKabupaten() + " berhasil ditambah!");
+            result.setData(kabupatenEntity);
+            return ResponseEntity.ok(result);
         }
         return null;
     }
 
     @Override
-    public KabupatenEntity updateKabupatenEntity(String namaKabupaten, KabupatenDto kabupatenDto) {
+    public ResponseEntity<?> updateKabupatenEntity(String namaKabupaten, KabupatenDto kabupatenDto) {
+        StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
         KabupatenEntity kabupatenEntity = kabupatenRepository.findByNamaKabupaten(namaKabupaten);
 
         if(kabupatenDto.getNamaKabupaten() != null){
@@ -45,7 +54,10 @@ public class KabupatenServiceImp implements KabupatenService{
         }
 
         kabupatenRepository.save(kabupatenEntity);
-        return kabupatenEntity;
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Kabupaten " +  kabupatenEntity.getNamaKabupaten() + " berhasil diupdate!");
+        result.setData(kabupatenEntity);
+        return ResponseEntity.ok(result);
     }
 
     private KabupatenEntity convertDtoToEntity(String kodeProvinsi, KabupatenDto kabupatenDto){

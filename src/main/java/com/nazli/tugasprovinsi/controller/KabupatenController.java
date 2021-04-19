@@ -1,11 +1,14 @@
 package com.nazli.tugasprovinsi.controller;
 
 import com.nazli.tugasprovinsi.model.dto.KabupatenDto;
+import com.nazli.tugasprovinsi.model.dto.StatusMessageDto;
 import com.nazli.tugasprovinsi.model.entity.KabupatenEntity;
 import com.nazli.tugasprovinsi.model.entity.KecamatanEntity;
+import com.nazli.tugasprovinsi.model.entity.ProvinsiEntity;
 import com.nazli.tugasprovinsi.repository.KabupatenRepository;
 import com.nazli.tugasprovinsi.services.KabupatenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,24 +54,40 @@ public class KabupatenController {
 //  insert data kabupaten
     @PostMapping("/insert/kabupaten/{kodeProvinsi}")
     public ResponseEntity<?> insertKabupatenEntity(@PathVariable String kodeProvinsi, @RequestBody KabupatenDto kabupatenDto){
-        KabupatenEntity kabupatenEntity = kabupatenService.insertKabupatenEntity(kodeProvinsi, kabupatenDto);
-        return ResponseEntity.ok(kabupatenEntity);
+        StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
+        try{
+            return kabupatenService.insertKabupatenEntity(kodeProvinsi, kabupatenDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  update data kabupaten
     @PutMapping("/update/kabupaten/{namaKabupaten}")
     public ResponseEntity<?> updateKabupatenEntity(@PathVariable String namaKabupaten, @RequestBody KabupatenDto kabupatenDto){
-        KabupatenEntity kabupatenEntity = kabupatenService.updateKabupatenEntity(namaKabupaten, kabupatenDto);
-        return ResponseEntity.ok(kabupatenEntity);
+
+        StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
+        try{
+            return kabupatenService.updateKabupatenEntity(namaKabupaten, kabupatenDto);
+        }catch (Exception e){
+            result.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 //  delete data kabupaten
     @DeleteMapping("/delete/kabupaten/{namaKabupaten}")
     public ResponseEntity<?> deleteKabupatenEntity(@PathVariable String namaKabupaten){
+        StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
         KabupatenEntity kabupatenEntity = kabupatenRepository.findByNamaKabupaten(namaKabupaten);
         kabupatenEntity.setStatus(0);
         kabupatenRepository.save(kabupatenEntity);
-        return ResponseEntity.ok(kabupatenEntity);
+
+        result.setStatus(HttpStatus.OK.value());
+        result.setMessage("Data Kabupaten " + kabupatenEntity.getNamaKabupaten() + " berhasil dihapus!");
+        result.setData(kabupatenEntity);
+        return ResponseEntity.ok(result);
     }
 
 }
