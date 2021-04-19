@@ -25,8 +25,9 @@ public class DesaController {
 //  get all data desa
     @GetMapping("/desa-all")
     public ResponseEntity<?> getAll(){
-        List<DesaEntity> desaEntityList = desaRepository.findAll();
-        return ResponseEntity.ok(desaEntityList);
+        List<DesaEntity> desaEntityListActive = desaRepository.findByStatus(1);
+//        List<DesaEntity> desaEntityList = desaRepository.findAll();
+        return ResponseEntity.ok(desaEntityListActive);
     }
 
 //  get by id data desa

@@ -11,6 +11,7 @@ import java.util.List;
 public interface DesaRepository extends JpaRepository<DesaEntity, Integer> {
     DesaEntity findByNamaDesa(String namaDesa);
     DesaEntity findByKodeDesa(String kodeDesa);
+    List<DesaEntity> findByStatus(Integer status);
 
     @Query(value = "SELECT * FROM tbl_desa WHERE kode_provinsi = ?", nativeQuery = true)
     List<DesaEntity> getDesaFromKodeProv(String kodeProvinsi);

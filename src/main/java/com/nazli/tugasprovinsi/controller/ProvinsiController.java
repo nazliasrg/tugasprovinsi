@@ -29,8 +29,9 @@ public class ProvinsiController {
 //  get all data provinsi
     @GetMapping("/provinsi-all")
     public ResponseEntity<?> getAll(){
-        List<ProvinsiEntity> provinsiEntityList = provinsiRepository.findAll();
-        return ResponseEntity.ok(provinsiEntityList);
+        List<ProvinsiEntity> provinsiEntityListActive = provinsiRepository.findByStatus(1);
+//        List<ProvinsiEntity> provinsiEntityList = provinsiRepository.findAll();
+        return ResponseEntity.ok(provinsiEntityListActive);
     }
 
 //  get by id data provinsi

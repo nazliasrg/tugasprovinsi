@@ -13,6 +13,7 @@ import java.util.List;
 public interface KabupatenRepository extends JpaRepository<KabupatenEntity, Integer> {
     KabupatenEntity findByNamaKabupaten(String namaKabupaten);
     KabupatenEntity findByKodeKabupaten(String kodeKabupaten);
+    List<KabupatenEntity> findByStatus(Integer status);
 
     @Query(value = "SELECT kode_kabupaten FROM tbl_kabupaten WHERE nama_kabupaten = ?", nativeQuery = true)
     KabupatenEntity getKodeKabupatenByNamaKabupaten(String namaKabupaten);

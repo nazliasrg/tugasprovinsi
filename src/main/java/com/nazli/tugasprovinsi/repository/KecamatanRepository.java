@@ -12,6 +12,7 @@ import java.util.List;
 public interface KecamatanRepository extends JpaRepository<KecamatanEntity, Integer> {
     KecamatanEntity findByNamaKecamatan(String namaKecamatan);
     KecamatanEntity findByKodeKecamatan(String kodeKecamatan);
+    List<KecamatanEntity> findByStatus(Integer status);
 
     @Query(value = "SELECT * FROM tbl_kecamatan WHERE kode_provinsi = ?", nativeQuery = true)
     List<KecamatanEntity> getKecamatanFromKodeProv(String kodeProvinsi);

@@ -26,8 +26,9 @@ public class KecamatanController {
 //  get all data kecamatan
     @GetMapping("/kecamatan-all")
     public ResponseEntity<?> getAll(){
-        List<KecamatanEntity> kecamatanEntityList = kecamatanRepository.findAll();
-        return ResponseEntity.ok(kecamatanEntityList);
+        List<KecamatanEntity> kecamatanEntityListActive = kecamatanRepository.findByStatus(1);
+//        List<KecamatanEntity> kecamatanEntityList = kecamatanRepository.findAll();
+        return ResponseEntity.ok(kecamatanEntityListActive);
     }
 
 //  get by id data kecamatan

@@ -26,8 +26,9 @@ public class KabupatenController {
 //  get all data kabupaten
     @GetMapping("/kabupaten-all")
     public ResponseEntity<?> getAll(){
-        List<KabupatenEntity> kabupatenEntityList = kabupatenRepository.findAll();
-        return ResponseEntity.ok(kabupatenEntityList);
+        List<KabupatenEntity> kabupatenEntityListActive = kabupatenRepository.findByStatus(1);
+//        List<KabupatenEntity> kabupatenEntityList = kabupatenRepository.findAll();
+        return ResponseEntity.ok(kabupatenEntityListActive);
     }
 
 //  get by id data kabupaten
